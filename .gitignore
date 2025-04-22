@@ -1,10 +1,5 @@
-venv/
-laeeq.txt
+# Ignore .pyc files
 *.pyc
-
-[bumpversion]
-
+# Ignore virtual environments
 venv/
-venv/
-venv/
-venv/
+.venv/
