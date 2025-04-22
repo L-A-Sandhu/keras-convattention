@@ -3,7 +3,7 @@ name: Build and Publish Python Package
 on:
   push:
     branches:
-      - main  # Trigger the action when changes are pushed to the 'main' branch
+      - main  # Trigger on push to the 'main' branch
   pull_request:
     branches:
       - main  # Trigger on pull requests to 'main'
@@ -28,7 +28,7 @@ jobs:
       - name: Configure Git user
         run: |
           git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"  # Ensure Git has user details
+          git config --global user.email "actions@github.com"
 
       - name: Install project dependencies
         run: |
@@ -40,7 +40,7 @@ jobs:
 
       - name: Bump version
         run: |
-          bumpversion patch  # You can change 'patch' to 'minor' or 'major' based on your needs
+          bumpversion patch  # Change 'patch' to 'minor' or 'major' as per your versioning strategy
 
       - name: Build package
         run: |
@@ -49,7 +49,7 @@ jobs:
       - name: Publish package to PyPI
         if: github.ref == 'refs/heads/main'  # Only push to PyPI from the 'main' branch
         env:
-          PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+          PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}  # Using the PyPI username stored as a secret
+          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}  # Using the PyPI API token stored as a secret
         run: |
-          poetry publish --username $PYPI_USERNAME --password $PYPI_PASSWORD --build
+          poetry publish --username $PYPI_USERNAME --password $PYPI_PASSWORD --build --no-interaction
