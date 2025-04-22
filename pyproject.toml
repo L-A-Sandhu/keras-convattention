@@ -8,15 +8,15 @@ homepage = "https://github.com/L-A-Sandhu/"
 repository = "https://github.com/L-A-Sandhu/keras-convattention"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.13"  # Supports Python 3.8 to 3.12
-tensorflow = "^2.15.0"  # Supports TensorFlow between 2.15 and 2.19
-numpy = "^1.21"
-keras = "^2.7"
-scikit-learn = "^1.0"
+python        = ">=3.10,<3.11"
+numpy         = "^1.26.4"
+tensorflow    = "^2.19.0"
+scikit-learn  = "^1.6.1"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^6.2"
-black = "^21.9b0"
+pytest     = "^8.3.5"
+pytest-cov = "^6.1.1"
+twine      = "^6.1.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
