@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "keras-convattention"
+version = "0.1.0"
+description = "A Keras layer combining Convolution and Attention mechanisms for Time Series models"
+authors = ["Laeeq Aslam<laeeq.aslam.100@gmail.com>"]
+license = "MIT"
+homepage = "https://github.com/L-A-Sandhu/"
+repository = "https://github.com/L-A-Sandhu/keras-convattention"
+
+[tool.poetry.dependencies]
+python = ">=3.8,<3.13"  # Supports Python 3.8 to 3.12
+tensorflow = "^2.15.0"  # Supports TensorFlow between 2.15 and 2.19
+numpy = "^1.21"
+keras = "^2.7"
+scikit-learn = "^1.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.0"
+black = "^21.9b0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
