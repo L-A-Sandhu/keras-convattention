@@ -1,6 +1,9 @@
 venv/
 laeeq.txt
+*.pyc
+
 [bumpversion]
+
 venv/
 venv/
 venv/
