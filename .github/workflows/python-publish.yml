@@ -3,10 +3,10 @@ name: Build and Publish Python Package
 on:
   push:
     branches:
-      - master  # Trigger the action when changes are pushed to the 'master' branch
+      - main  # Trigger on push to 'main' branch (not 'master')
   pull_request:
     branches:
-      - master  # Trigger on pull requests to 'master'
+      - main  # Trigger on pull requests to 'main'
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install poetry
+          pip install poetry bumpversion
 
       - name: Install project dependencies
         run: |
@@ -33,12 +33,16 @@ jobs:
         run: |
           poetry run pytest
 
+      - name: Bump version
+        run: |
+          bumpversion patch  # You can change 'patch' to 'minor' or 'major' based on your needs
+
       - name: Build package
         run: |
           poetry build
 
       - name: Publish package to PyPI
-        if: github.ref == 'refs/heads/master'  # Only push to PyPI from the 'master' branch
+        if: github.ref == 'refs/heads/main'  # Only publish from the 'main' branch
         env:
           PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
           PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
