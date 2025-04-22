@@ -3,14 +3,14 @@ name: Build and Publish Python Package
 on:
   push:
     branches:
-      - main  # Trigger on push to the 'main' branch
+      - main
   pull_request:
     branches:
-      - main  # Trigger on pull requests to 'main'
+      - main
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # The environment that will run the job
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -18,7 +18,7 @@ jobs:
       - name: Set up Python 3.10
         uses: actions/setup-python@v2
         with:
-          python-version: '3.10'  # Specify the correct Python version for your project
+          python-version: '3.10'
 
       - name: Install dependencies
         run: |
@@ -40,16 +40,21 @@ jobs:
 
       - name: Bump version
         run: |
-          bumpversion patch  # Change 'patch' to 'minor' or 'major' as per your versioning strategy
+          bumpversion patch
 
       - name: Build package
         run: |
           poetry build
 
+      - name: Debug PyPI credentials
+        run: |
+          echo "PYPI_USERNAME=${{ secrets.PYPI_USERNAME }}"
+          echo "PYPI_PASSWORD=${{ secrets.PYPI_PASSWORD }}"
+
       - name: Publish package to PyPI
-        if: github.ref == 'refs/heads/main'  # Only push to PyPI from the 'main' branch
+        if: github.ref == 'refs/heads/main'
         env:
-          PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}  # Using the PyPI username stored as a secret
-          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}  # Using the PyPI API token stored as a secret
+          PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
         run: |
           poetry publish --username $PYPI_USERNAME --password $PYPI_PASSWORD --build --no-interaction
