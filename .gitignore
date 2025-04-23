@@ -1,5 +1,7 @@
 # Ignore .pyc files
 *.pyc
+*.keras
 # Ignore virtual environments
 venv/
 .venv/
+
