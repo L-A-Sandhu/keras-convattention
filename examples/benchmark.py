@@ -82,7 +82,13 @@ def build_lstm_attention_model(input_shape):
 def build_lstm_cnn_attention_model(input_shape):
     model = Sequential([
         clone_base_lstm(input_shape),  # Cloned LSTM (trainable)
-        ConvAttentionLayer(filters=32, kernel_size=1, pool_size=1, units=128, score='bahdanau', dilation_rate=1, padding='causal', activation='sigmoid'),
+        ConvAttentionLayer(
+            filters=32,
+            kernel_size=1,
+            units=128,
+            score='bahdanau',
+            activation='sigmoid'
+        ),
         Dense(3)
     ])
     model.compile(optimizer=Adam(learning_rate=1e-4), loss='mean_squared_error')
@@ -182,18 +188,28 @@ print("Shape of lstm_attention_preds:", np.shape(lstm_attention_preds))
 print("Shape of lstm_cnn_attention_preds:", np.shape(lstm_cnn_attention_preds))
 print("Shape of Y_test:", np.shape(Y_test))
 
-lstm_attention_mse = mean_squared_error(Y_test, lstm_attention_preds)
-lstm_cnn_attention_mse = mean_squared_error(Y_test, lstm_cnn_attention_preds)
+# Calculate metrics
+def calculate_metrics(y_true, y_pred):
+    mse = mean_squared_error(y_true, y_pred)
+    mae = mean_absolute_error(y_true, y_pred)
+    r2 = r2_score(y_true, y_pred)
+    
+    # Additional metrics
+    mape = np.mean(np.abs((y_true - y_pred) / y_true)) * 100
+    smape = np.mean(2 * np.abs(y_pred - y_true) / (np.abs(y_true) + np.abs(y_pred))) * 100
+    wape = np.sum(np.abs(y_true - y_pred)) / np.sum(np.abs(y_true)) * 100
 
-lstm_attention_mae = mean_absolute_error(Y_test, lstm_attention_preds)
-lstm_cnn_attention_mae = mean_absolute_error(Y_test, lstm_cnn_attention_preds)
+    return mse, mae, r2, mape, smape, wape
 
-lstm_attention_r2 = r2_score(Y_test, lstm_attention_preds)
-lstm_cnn_attention_r2 = r2_score(Y_test, lstm_cnn_attention_preds)
+# Metrics for LSTM+Attention model
+lstm_attention_mse, lstm_attention_mae, lstm_attention_r2, lstm_attention_mape, lstm_attention_smape, lstm_attention_wape = calculate_metrics(Y_test, lstm_attention_preds)
+
+# Metrics for LSTM+CNN+Attention model
+lstm_cnn_attention_mse, lstm_cnn_attention_mae, lstm_cnn_attention_r2, lstm_cnn_attention_mape, lstm_cnn_attention_smape, lstm_cnn_attention_wape = calculate_metrics(Y_test, lstm_cnn_attention_preds)
 
 # Print the results
-print(f"LSTM + Attention Model MSE: {lstm_attention_mse:.4f}, MAE: {lstm_attention_mae:.4f}, R²: {lstm_attention_r2:.4f}")
-print(f"LSTM + CNN + Attention Model MSE: {lstm_cnn_attention_mse:.4f}, MAE: {lstm_cnn_attention_mae:.4f}, R²: {lstm_cnn_attention_r2:.4f}")
+print(f"LSTM + Attention Model MSE: {lstm_attention_mse:.4f}, MAE: {lstm_attention_mae:.4f}, R²: {lstm_attention_r2:.4f}, MAPE: {lstm_attention_mape:.4f}, SMAPE: {lstm_attention_smape:.4f}, WAPE: {lstm_attention_wape:.4f}")
+print(f"LSTM + CNN + Attention Model MSE: {lstm_cnn_attention_mse:.4f}, MAE: {lstm_cnn_attention_mae:.4f}, R²: {lstm_cnn_attention_r2:.4f}, MAPE: {lstm_cnn_attention_mape:.4f}, SMAPE: {lstm_cnn_attention_smape:.4f}, WAPE: {lstm_cnn_attention_wape:.4f}")
 
 # Plot the predictions of both models against actual values
 plt.figure(figsize=(10, 6))

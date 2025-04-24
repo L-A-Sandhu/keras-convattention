@@ -70,12 +70,10 @@ def build_lstm_attention_model(input_shape):
     model.compile(optimizer=Adam(learning_rate=1e-4), loss='mean_squared_error')
     return model
 
-def build_lstm_cnn_attention_model(input_shape, filters, kernel_size, pool_size, dilation_rate, activation):
+def build_lstm_cnn_attention_model(input_shape, filters, kernel_size, activation):
     model = Sequential([
         clone_base_lstm(input_shape),  # Cloned LSTM (trainable)
-        ConvAttentionLayer(filters=filters, kernel_size=kernel_size, pool_size=pool_size, 
-                           units=128, score='bahdanau', dilation_rate=dilation_rate, 
-                           padding='causal', activation=activation),
+        ConvAttentionLayer(filters=filters, kernel_size=kernel_size, units=128, score='bahdanau', activation=activation),
         Dense(3)
     ])
     model.compile(optimizer=Adam(learning_rate=1e-4), loss='mean_squared_error')
@@ -84,15 +82,13 @@ def build_lstm_cnn_attention_model(input_shape, filters, kernel_size, pool_size,
 # Objective function for Optuna
 def objective(trial):
     # Hyperparameters to tune
-    filters = trial.suggest_categorical('filters', [32, 64, 128])
-    kernel_size = trial.suggest_int('kernel_size', 1, 5)
-    pool_size = trial.suggest_int('pool_size', 1, 2)
-    dilation_rate = trial.suggest_int('dilation_rate', 1, 3)
+    filters = trial.suggest_categorical('filters', [8, 16, 32, 48, 64,  128])
+    kernel_size = trial.suggest_categorical('kernel_size', [1,2,3,4, 5])
     activation = trial.suggest_categorical('activation', ['relu', 'tanh', 'sigmoid', 'swish'])
 
     # Initialize model with the selected hyperparameters
     input_shape = (X_train.shape[1], X_train.shape[2])
-    model = build_lstm_cnn_attention_model(input_shape, filters, kernel_size, pool_size, dilation_rate, activation)
+    model = build_lstm_cnn_attention_model(input_shape, filters, kernel_size, activation)
 
     # Early stopping
     early_stopping = EarlyStopping(patience=5, monitor='val_loss', restore_best_weights=True, verbose=1)
