@@ -96,7 +96,7 @@ def clone_base_lstm(input_shape):
 def build_lstm_cnn_attention_model(input_shape):
     model = Sequential([
         clone_base_lstm(input_shape),  # Cloned LSTM (trainable)
-        ConvAttentionLayer(filters=32, kernel_size=1, pool_size=1, units=128, score='bahdanau', dilation_rate=1, padding='causal', activation='sigmoid'),
+        ConvAttentionLayer(filters=32, kernel_size=1, units=128, score='bahdanau', activation='sigmoid'),
         Dense(1)
     ])
     model.compile(optimizer=Adam(learning_rate=1e-4), loss='mean_squared_error')
